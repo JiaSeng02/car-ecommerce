@@ -1,9 +1,14 @@
 .auth-container {
   display: flex;
+  flex: 1;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
   background: #f3f4f6;
+  padding: 2rem 1rem;
+  min-height: calc(100vh-160px);
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .auth-form {
