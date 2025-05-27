@@ -1,30 +1,46 @@
 <template>
-  <div>
-    <h1>Car Listings</h1>
-    <div v-for="car in cars" :key="car.id">
-      {{ car.brand }} {{ car.model }} - ${{ car.price }} ({{ car.year }})
-    </div>
+  <div id="app">
+    <nav>
+      <router-link to="/cars">Cars</router-link> |
+      <router-link to="/login" v-if="!isAuthenticated">Login</router-link>
+      <router-link to="/register" v-if="!isAuthenticated">Register</router-link>
+      <button @click="logout" v-if="isAuthenticated">Logout</button>
+    </nav>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import axios from "axios";
+import { EventBus } from "@/event-bus";
 
 export default {
   data() {
     return {
-      cars: [],
+      isAuthenticatedInternal: !!localStorage.getItem("auth_token"),
     };
   },
-  mounted() {
-    axios
-      .get("http://localhost:8000/api/cars")
-      .then((response) => {
-        this.cars = response.data;
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+  computed: {
+    isAuthenticated() {
+      return this.isAuthenticatedInternal;
+    },
+  },
+  methods: {
+    logout() {
+      localStorage.removeItem("auth_token");
+      this.isAuthenticatedInternal = false;
+      this.$router.push("/login");
+    },
+  },
+  created() {
+    EventBus.$on("login", () => {
+      this.isAuthenticatedInternal = true;
+    });
+
+    EventBus.$on("logout", () => {
+      this.logout();
+    });
   },
 };
 </script>
+
+<style></style>
