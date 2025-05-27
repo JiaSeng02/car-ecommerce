@@ -3,19 +3,34 @@
     <form @submit.prevent="handleRegister" class="auth-form">
       <h2>Register</h2>
       <input v-model="form.name" type="text" placeholder="Name" required />
+      <div class="error-message" v-if="errors.name">{{ errors.name[0] }}</div>
+
       <input v-model="form.email" type="email" placeholder="Email" required />
+      <div class="error-message" v-if="errors.email">{{ errors.email[0] }}</div>
+
       <input
         v-model="form.password"
         type="password"
         placeholder="Password"
         required
       />
+      <div class="error-message" v-if="errors.password">
+        {{ errors.password[0] }}
+      </div>
+
       <input
         v-model="form.password_confirmation"
         type="password"
         placeholder="Confirm Password"
         required
       />
+      <div class="error-message" v-if="errors.password_confirmation">
+        {{ errors.password_confirmation[0] }}
+      </div>
+
+      <div class="error-message" v-if="errors.general">
+        {{ errors.general }}
+      </div>
 
       <button type="submit">Register</button>
     </form>
@@ -37,11 +52,14 @@ export default {
         password: "",
         password_confirmation: "",
       },
+      errors: {},
     };
   },
 
   methods: {
     async handleRegister() {
+      this.errors = {};
+
       try {
         const response = await axios.post(
           "http://localhost:8000/api/register",
@@ -51,7 +69,13 @@ export default {
         EventBus.$emit("login");
         this.$router.push("/");
       } catch (error) {
-        console.error(error.response.data);
+        if (error.response && error.response.status === 422) {
+          this.errors = error.response.data.errors;
+        } else if (error.response && error.response.data.message) {
+          this.errors.general = this.errors.response.data.message;
+        } else {
+          this.errors.general = "An unexpected error occurred.";
+        }
       }
     },
   },
