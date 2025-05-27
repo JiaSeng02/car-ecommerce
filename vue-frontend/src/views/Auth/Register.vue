@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <h2>Register</h2>
-    <form @submit.prevent="handleRegister">
+  <div class="auth-container">
+    <form @submit.prevent="handleRegister" class="auth-form">
+      <h2>Register</h2>
       <input v-model="form.name" type="text" placeholder="Name" required />
       <input v-model="form.email" type="email" placeholder="Email" required />
       <input
@@ -25,6 +25,7 @@
 <script>
 import { EventBus } from "@/event-bus";
 import axios from "axios";
+import "@/styles/authStyle/AuthCss.css";
 
 export default {
   name: "AuthRegister",

@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <h2>Login</h2>
-    <form @submit.prevent="handleLogin">
+  <div class="auth-container">
+    <form @submit.prevent="handleLogin" class="auth-form">
+      <h2>Login</h2>
       <input v-model="form.email" type="email" placeholder="Email" required />
       <input
         v-model="form.password"
@@ -17,6 +17,7 @@
 <script>
 import axios from "axios";
 import { EventBus } from "@/event-bus";
+import "@/styles/authStyle/AuthCss.css";
 
 export default {
   name: "AuthLogin",
@@ -45,3 +46,5 @@ export default {
   },
 };
 </script>
+
+<style scoped></style>
