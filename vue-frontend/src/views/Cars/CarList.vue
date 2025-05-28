@@ -12,6 +12,7 @@
       </h3>
       <div v-if="filteredCars.length">
         <div v-for="car in filteredCars" :key="car.id" class="car-card">
+          <img :src="car.image" alt="Car Image" class="car-image" />
           <strong>{{ car.brand }} {{ car.model }}</strong>
           <p>${{ car.price }} - {{ car.year }}</p>
         </div>
