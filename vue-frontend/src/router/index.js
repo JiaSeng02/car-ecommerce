@@ -5,6 +5,8 @@ import Register from "@/views/Auth/Register.vue";
 import CarList from "@/views/Cars/CarList.vue";
 import MainLayout from "@/layouts/MainLayout.vue";
 import Profile from "@/views/Profile/Profile.vue";
+import WelcomePage from "@/views/WelcomePage.vue";
+import SupportPage from "@/views/Support/SupportPage.vue";
 
 Vue.use(VueRouter);
 
@@ -13,10 +15,12 @@ const routes = [
     path: "/",
     component: MainLayout,
     children: [
-      { path: "", component: CarList },
+      { path: "cars", component: CarList },
       { path: "profile", component: Profile },
       { path: "login", component: Login },
       { path: "register", component: Register },
+      { path: "", component: WelcomePage },
+      { path: "support", component: SupportPage },
     ],
   },
 ];

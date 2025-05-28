@@ -1,23 +1,40 @@
 <template>
   <div class="layout-container">
     <header class="header" v-if="!isAuthPage">
-      <h1>Car E-commerce</h1>
-      <nav>
-        <router-link to="/">Home</router-link> |
-        <router-link to="/login" v-if="!isAuthenticated">Login</router-link>
-        <router-link to="/register" v-if="!isAuthenticated"
-          >Register</router-link
+      <nav class="nav-bar">
+        <router-link to="/" class="logo-container">
+          <img src="@/assets/images/logo.png" alt="Car Logo" class="logo-img" />
+          <h2>Car E-Commerce</h2>
+        </router-link>
+
+        <div class="nav-item dropdown">
+          <span class="dropdown-toggle">Brand</span>
+          <ul class="dropdown-menu">
+            <li
+              v-for="brand in uniqueBrands"
+              :key="brand"
+              @click="selectBrand(brand)"
+            >
+              {{ brand }}
+            </li>
+          </ul>
+        </div>
+        <router-link to="/support" class="nav-item">Support</router-link>
+        <router-link to="/profile" v-if="isAuthenticated" class="nav-item"
+          >Profile</router-link
         >
-        <router-link to="/profile" v-if="isAuthenticated">Profile</router-link>
-        <button @click="logout" v-if="isAuthenticated">Logout</button>
       </nav>
     </header>
 
     <header class="header" v-else>
-      <h1>Car E-Commerce</h1>
-      <nav>
-        <router-link to="/login">Login</router-link> |
-        <router-link to="/register">Register</router-link>
+      <nav class="nav-bar">
+        <div class="logo-container">
+          <img src="@/assets/images/logo.png" alt="Car Logo" class="logo-img" />
+          <h2>Car E-Commerce</h2>
+        </div>
+
+        <router-link to="/login" class="nav-item">Login</router-link> |
+        <router-link to="/register" class="nav-item">Register</router-link>
       </nav>
     </header>
 
@@ -32,16 +49,23 @@
 </template>
 
 <script>
+import axios from "axios";
 import "@/styles/mainLayout/mainLayout.css";
+
 export default {
   data() {
     return {
       isAuthenticated: !!localStorage.getItem("auth_token"),
+      selectedBrand: "",
+      brands: [],
     };
   },
   computed: {
     isAuthPage() {
       return ["/login", "/register"].includes(this.$route.path);
+    },
+    uniqueBrands() {
+      return [...new Set(this.brands)];
     },
   },
   watch: {
@@ -49,11 +73,36 @@ export default {
       this.isAuthenticated = !!localStorage.getItem("auth_token");
     },
   },
+  mounted() {
+    axios
+      .get("http://localhost:8000/api/cars")
+      .then((response) => {
+        this.brands = response.data.map((car) => car.brand);
+      })
+      .catch((error) => {
+        console.error("Error fetching brands:", error);
+      });
+  },
   methods: {
-    logout() {
-      localStorage.removeItem("auth_token");
-      this.isAuthenticated = false;
-      this.$router.push("/login");
+    goToBrand() {
+      if (
+        this.selectedBrand &&
+        this.$route.query.brand !== this.selectedBrand
+      ) {
+        this.$router.push({
+          path: "/cars",
+          query: { brand: this.selectedBrand },
+        });
+      }
+    },
+    selectBrand(brand) {
+      this.selectedBrand = brand;
+      if (this.$route.query.brand !== brand) {
+        this.$router.push({
+          path: "/cars",
+          query: { brand },
+        });
+      }
     },
   },
 };
