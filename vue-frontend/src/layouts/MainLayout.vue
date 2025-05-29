@@ -1,6 +1,6 @@
 <template>
   <div class="layout-container">
-    <header class="header" v-if="!isAuthPage">
+    <header class="header">
       <nav class="nav-bar">
         <router-link to="/" class="logo-container">
           <img src="@/assets/images/logo.png" alt="Car Logo" class="logo-img" />
@@ -23,18 +23,11 @@
         <router-link to="/profile" v-if="isAuthenticated" class="nav-item"
           >Profile</router-link
         >
-      </nav>
-    </header>
 
-    <header class="header" v-else>
-      <nav class="nav-bar">
-        <div class="logo-container">
-          <img src="@/assets/images/logo.png" alt="Car Logo" class="logo-img" />
-          <h2>Car E-Commerce</h2>
+        <div class="userAuth" v-if="!isAuthenticated">
+          <router-link to="/login" class="nav-item">Login</router-link> |
+          <router-link to="/register" class="nav-item">Register</router-link>
         </div>
-
-        <router-link to="/login" class="nav-item">Login</router-link> |
-        <router-link to="/register" class="nav-item">Register</router-link>
       </nav>
     </header>
 
@@ -55,35 +48,39 @@ import "@/styles/mainLayout/mainLayout.css";
 export default {
   data() {
     return {
-      isAuthenticated: !!localStorage.getItem("auth_token"),
       selectedBrand: "",
       brands: [],
+      auth: !!localStorage.getItem("auth_token"),
     };
   },
   computed: {
-    isAuthPage() {
-      return ["/login", "/register"].includes(this.$route.path);
-    },
     uniqueBrands() {
       return [...new Set(this.brands)];
+    },
+    isAuthenticated() {
+      return this.auth;
     },
   },
   watch: {
     $route() {
-      this.isAuthenticated = !!localStorage.getItem("auth_token");
+      this.checkAuth();
     },
   },
   mounted() {
-    axios
-      .get("http://localhost:8000/api/cars")
-      .then((response) => {
-        this.brands = response.data.map((car) => car.brand);
-      })
-      .catch((error) => {
-        console.error("Error fetching brands:", error);
-      });
+    this.fetchBrands();
+    this.checkAuth();
   },
   methods: {
+    fetchBrands() {
+      axios
+        .get("http://localhost:8000/api/cars")
+        .then((response) => {
+          this.brands = response.data.map((car) => car.brand);
+        })
+        .catch((error) => {
+          console.error("Error fetching brands:", error);
+        });
+    },
     goToBrand() {
       if (
         this.selectedBrand &&
@@ -103,6 +100,9 @@ export default {
           query: { brand },
         });
       }
+    },
+    checkAuth() {
+      this.auth = !!localStorage.getItem("auth_token");
     },
   },
 };

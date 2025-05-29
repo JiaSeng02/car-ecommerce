@@ -16,3 +16,9 @@ Route::middleware('auth:sanctum')->get('/user', function(Request $request){
 });
 
 Route::middleware('auth:sanctum')->post('/user/upload-image', [UserController::class, 'uploadImage']);
+
+Route::get('/cars/{id}', [CarController::class, 'show']);
+
+Route::middleware('auth:sanctum')->post('/book-test-drive', [UserController::class, 'bookTestDrive']);
+
+Route::middleware('auth:sanctum')->get('/user/cars', [UserController::class, 'getUserCars']);

@@ -72,7 +72,7 @@ export default {
         if (error.response && error.response.status === 422) {
           this.errors = error.response.data.errors;
         } else if (error.response && error.response.data.message) {
-          this.errors.general = this.errors.response.data.message;
+          this.errors.general = error.response.data.message;
         } else {
           this.errors.general = "An unexpected error occurred.";
         }

@@ -7,6 +7,7 @@ import MainLayout from "@/layouts/MainLayout.vue";
 import Profile from "@/views/Profile/Profile.vue";
 import WelcomePage from "@/views/WelcomePage.vue";
 import SupportPage from "@/views/Support/SupportPage.vue";
+import CarDetails from "@/views/Cars/CarDetails.vue";
 
 Vue.use(VueRouter);
 
@@ -21,6 +22,7 @@ const routes = [
       { path: "register", component: Register },
       { path: "", component: WelcomePage },
       { path: "support", component: SupportPage },
+      { path: "/cars/:id", name: "car-details", component: CarDetails },
     ],
   },
 ];

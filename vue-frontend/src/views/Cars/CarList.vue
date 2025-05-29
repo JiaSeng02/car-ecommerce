@@ -11,7 +11,12 @@
         Car Listings <span v-if="selectedBrand"> - {{ selectedBrand }}</span>
       </h3>
       <div v-if="filteredCars.length">
-        <div v-for="car in filteredCars" :key="car.id" class="car-card">
+        <div
+          v-for="car in filteredCars"
+          :key="car.id"
+          class="car-card"
+          @click="goToCarDetails(car.id)"
+        >
           <img :src="car.image" alt="Car Image" class="car-image" />
           <strong>{{ car.brand }} {{ car.model }}</strong>
           <p>${{ car.price }} - {{ car.year }}</p>
@@ -70,6 +75,11 @@ export default {
       .catch((error) => {
         console.error("Failed to fetch cars: ", error);
       });
+  },
+  methods: {
+    goToCarDetails(carId) {
+      this.$router.push({ name: "car-details", params: { id: carId } });
+    },
   },
 };
 </script>

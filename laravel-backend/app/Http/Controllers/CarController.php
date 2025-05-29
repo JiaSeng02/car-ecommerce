@@ -28,7 +28,13 @@ class CarController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $car = Car::find($id);
+
+        if(!$car) {
+            return response()->json(['message' => 'Car not found'], 404);
+        }
+
+        return response()->json($car);
     }
 
     /**

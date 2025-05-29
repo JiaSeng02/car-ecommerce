@@ -24,6 +24,23 @@
         <p><span>Email:</span> {{ user.email }}</p>
         <p><span>Joined:</span> {{ formatDate(user.created_at) }}</p>
       </div>
+
+      <div class="booking-schedule" v-if="userCars.length">
+        <h3>Your Car Bookings</h3>
+        <ul>
+          <li
+            v-for="booking in userCars"
+            :key="booking.id"
+            class="booking-item"
+          >
+            <strong>{{ booking.car.brand }} {{ booking.car.model }}</strong
+            ><br />
+            Test Drive: {{ formatDate(booking.test_drive_date) }} at
+            {{ booking.test_drive_time }}<br />
+          </li>
+        </ul>
+      </div>
+
       <button class="logout-btn" @click="logout">Logout</button>
     </div>
     <div v-else class="loading">Loading user information...</div>
@@ -38,6 +55,7 @@ export default {
   data() {
     return {
       user: null,
+      userCars: [],
     };
   },
   methods: {
@@ -61,6 +79,20 @@ export default {
         })
         .catch(() => {
           this.$router.push("/login");
+        });
+    },
+    fetchUserCars() {
+      const token = localStorage.getItem("auth_token");
+      axios
+        .get("http://localhost:8000/api/user/cars", {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((response) => {
+          this.userCars = response.data;
+        })
+        .catch((error) => {
+          console.error("Failed to fetch car bookings", error);
+          this.userCars = [];
         });
     },
     handleImageUpload(event) {
@@ -92,6 +124,7 @@ export default {
   },
   mounted() {
     this.fetchUser();
+    this.fetchUserCars();
   },
 };
 </script>
@@ -165,5 +198,31 @@ export default {
 .user-details p span {
   font-weight: 600;
   color: #2c3e50;
+}
+
+.booking-schedule {
+  margin-top: 30px;
+  text-align: left;
+}
+
+.booking-schedule h3 {
+  margin-bottom: 15px;
+  color: #34495e;
+}
+
+.booking-item {
+  background-color: #ecf0f1;
+  padding: 10px 15px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.booking-item strong {
+  color: #2c3e50;
+}
+
+.booking-item em {
+  color: #2980b9;
 }
 </style>
